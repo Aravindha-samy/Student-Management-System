@@ -7,12 +7,18 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import java.awt.Color;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 import javax.swing.UIManager;
 
@@ -22,6 +28,10 @@ public class Login extends JFrame {
 	private JPanel contentPane;
 	private JTextField txtUser;
 	private JPasswordField txtPass;
+	
+	Connection con;
+	PreparedStatement pst;
+	ResultSet rs;
 
 	/**
 	 * Launch the application.
@@ -44,7 +54,7 @@ public class Login extends JFrame {
 	 */
 	public Login() {
 		
-		
+		JFrame f=new JFrame();
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
@@ -85,6 +95,54 @@ public class Login extends JFrame {
 		contentPane.add(txtPass);
 		
 		JButton btnLogin = new JButton("Login");
+		btnLogin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					
+					if(txtUser.getText().isEmpty()||txtPass.getText().isEmpty())
+					{
+						JOptionPane.showMessageDialog(f,"Enter the Username");
+					}
+					
+					else {
+						String username=txtUser.getText();
+						String password=txtPass.getText();
+						
+						con = DriverManager.getConnection("jdbc:mysql://localhost:3306/studentmanagement","root","root");
+						
+						
+						pst=con.prepareStatement("select * from user where username=? and password=?");
+						pst.setString(1,username );
+						pst.setString(2,password );
+						rs=pst.executeQuery();
+						System.out.print("l");
+						
+						if(rs.next()) 
+						{
+							Main m= new Main();
+							f.hide();
+							m.setVisible(true);		
+
+						}
+						else {
+							JOptionPane.showMessageDialog(f,"Enter the Correct Username and Password");
+							txtUser.setText("");
+							txtPass.setText("");
+							txtUser.requestFocus(); 
+							
+						}
+					} 
+					
+					
+					
+					
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} 
+				
+			}
+		});
 		btnLogin.setBackground(Color.BLUE);
 		btnLogin.setForeground(Color.WHITE);
 		btnLogin.setFont(new Font("Tahoma", Font.BOLD, 11));
@@ -92,6 +150,7 @@ public class Login extends JFrame {
 		contentPane.add(btnLogin);
 		
 		JButton btnCancel = new JButton("Cancel");
+		btnCancel.setBackground(Color.CYAN);
 		btnCancel.setForeground(Color.WHITE);
 		btnCancel.setFont(new Font("Tahoma", Font.BOLD, 11));
 		btnCancel.addActionListener(new ActionListener() {

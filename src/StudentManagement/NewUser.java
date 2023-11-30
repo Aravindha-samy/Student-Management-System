@@ -62,7 +62,7 @@ public class NewUser extends JFrame {
 	public NewUser() {
 		setType(Type.UTILITY);
 		setTitle("NewUserForm\r\n");
-		JFrame f=new JFrame();
+		JFrame f=new JFrame(); 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
